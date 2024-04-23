@@ -1,10 +1,10 @@
 <?xml version="1.0"?>
 <?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
-  <name>sim_vehicle</name>
+  <name>rover_sie</name>
   <version>0.0.0</version>
   <description>TODO: Package description</description>
-  <maintainer email="ghufran1942@gmail.com">captainpaper</maintainer>
+  <maintainer email="ghufran1942@gmail.com">ghufran1942</maintainer>
   <license>TODO: License declaration</license>
 
   <depend>rclpy</depend>

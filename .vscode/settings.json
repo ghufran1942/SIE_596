@@ -1,0 +1,14 @@
+{
+    "python.autoComplete.extraPaths": [
+        "/home/captainpaper/ros2_sie596/build/sim_vehicle",
+        "/home/captainpaper/ros2_sie596/install/sim_vehicle/lib/python3.10/site-packages",
+        "/opt/ros/humble/lib/python3.10/site-packages",
+        "/opt/ros/humble/local/lib/python3.10/dist-packages"
+    ],
+    "python.analysis.extraPaths": [
+        "/home/captainpaper/ros2_sie596/build/sim_vehicle",
+        "/home/captainpaper/ros2_sie596/install/sim_vehicle/lib/python3.10/site-packages",
+        "/opt/ros/humble/lib/python3.10/site-packages",
+        "/opt/ros/humble/local/lib/python3.10/dist-packages"
+    ]
+}

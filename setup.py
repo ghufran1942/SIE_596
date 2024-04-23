@@ -2,7 +2,7 @@ import os
 from glob import glob
 from setuptools import find_packages, setup
 
-package_name = 'sim_vehicle'
+package_name = 'rover_sie'
 
 setup(
     name=package_name,
@@ -23,16 +23,16 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'rover_motion_error = sim_vehicle.rover_motion_error:main',
-            'rover_wheel_measurements = sim_vehicle.rover_wheel_measurement:main',
-            'rover_wheel_writer = sim_vehicle.rover_wheel_writer:main',
-            'rover_move = sim_vehicle.rover_move:main',
-            'rover_sensor_lidar = sim_vehicle.rover_sensor_lidar:main',
-            'rover_sensor_lidar_writer = sim_vehicle.rover_sensor_lidar_writer:main',
-            'rover_traj = sim_vehicle.rover_traj:main',
-            'rover_pose_write = sim_vehicle.rover_pose_writer:main',
-            'rover_dead_reck = sim_vehicle.rover_dead_reck:main',
-            'rover_dead_reck_writer = sim_vehicle.rover_dead_reck_writer:main'
+            'rover_motion_error = rover_sie.rover_motion_error:main',
+            'rover_wheel_measurements = rover_sie.rover_wheel_measurement:main',
+            'rover_wheel_writer = rover_sie.rover_wheel_writer:main',
+            'rover_move = rover_sie.rover_move:main',
+            'rover_sensor_lidar = rover_sie.rover_sensor_lidar:main',
+            'rover_sensor_lidar_writer = rover_sie.rover_sensor_lidar_writer:main',
+            'rover_traj = rover_sie.rover_traj:main',
+            'rover_pose_write = rover_sie.rover_pose_writer:main',
+            'rover_dead_reck = rover_sie.rover_dead_reck:main',
+            'rover_dead_reck_writer = rover_sie.rover_dead_reck_writer:main'
         ],
     },
 )

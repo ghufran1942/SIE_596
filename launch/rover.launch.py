@@ -8,7 +8,7 @@ cmd_vel = '/rover_cmd_vel'  # Velocity command topic
 rover_pose = '/model/rover/pose'  # Rover pose topic
 wheels_read = '/wheels_read'  # Wheel joints state topic
 lidar_topic = '/lidar_topic'  # Lidar data topic
-sdf_model_path = '/home/captainpaper/ros2_sie596/src/sim_vehicle/models/rover_hm.sdf'
+sdf_model_path = '/home/captainpaper/ros2_sie596/src/rover_sie/models/rover_hm.sdf'
 
 def generate_launch_description():
     """
@@ -64,69 +64,69 @@ def generate_launch_description():
 
         # Rover trajectory node
         Node(
-            package='sim_vehicle',
+            package='rover_sie',
             executable='rover_traj',
             name='rover_traj_node'
         ),
 
         # Lidar measurements node
         Node(
-            package='sim_vehicle',
+            package='rover_sie',
             executable='rover_sensor_lidar',
             name='rover_sensor_lidar_node'
         ),
 
         # Motion command node
         Node(
-            package='sim_vehicle',
+            package='rover_sie',
             executable='rover_move',
             name='rover_move_node'
         ),
 
         # Wheel measurements node
         Node(
-            package='sim_vehicle',
+            package='rover_sie',
             executable='rover_wheel_measurements',
             name='rover_wheel_measurements_node'
         ),
 
         # Pose writer node
         Node(
-            package='sim_vehicle',
+            package='rover_sie',
             executable='rover_pose_write',
             name='rover_pose_write_node'
         ),
 
         # Dead reckoning node
         Node(
-            package='sim_vehicle',
+            package='rover_sie',
             executable='rover_dead_reck',
             name='rover_dead_reck_node'
         ),
 
         Node(
-            package='sim_vehicle',
+            package='rover_sie',
             executable='rover_dead_reck_writer',
             name='rover_dead_reck_writer_node'
         ),
 
         # Compute error node
         # Node(
-        #     package='sim_vehicle',
+        #     package='rover_sie',
         #     executable='rover_motion_error',
         #     name='rover_motion_error_node'
         # ),    
 
         # Rover lidar writer
         Node(
-            package='sim_vehicle',
+            package='rover_sie',
             executable='rover_sensor_lidar_writer',
             name='rover_sensor_lidar_writer_node'
         ),
 
         # Rover wheel writer
         Node(
-            package='sim_vehicle',
+            package='rover_sie',
             executable='rover_wheel_writer',
             name='rover_wheel_writer_node'
         ),
