@@ -37,22 +37,12 @@ class WheelMeasurementsSubscriber(Node):
         self.subscription = self.create_subscription(JointState, '/rover/wheels/wheels_read', self.wheels_read_callback, 10)
 
         self.publisher = self.create_publisher( Float64MultiArray, '/rover/wheels/wheel_data', 10)
-        self.dr_publisher = self.create_publisher(Pose2D, '/rover/motion/dead_reckoning', 10)
         
         self.publishrate = 1.0 #s
         self.timer = self.create_timer(self.publishrate, self.wheel_data_publish)
         self.time = 0.0
         self.data_wheel = [0.0] * 13 #initialize the list with 13 zeros:time stamp + 4 wheels with 3 data each.
         
-        self.wheel_radius = 0.4 #meters
-        self.wheel_base = 0.4 #meters
-        self.x_pos = 0.0
-        self.y_pos = 0.0
-        self.orientation = 0.0  # Initial orientation in radians
-        
-        self.last_rear_left_wheel_pos = 0.0
-        self.last_rear_right_wheel_pos = 0.0
-
     def wheels_read_callback(self, msg):
         """
         Callback function for processing the received wheel measurements.
@@ -81,44 +71,6 @@ class WheelMeasurementsSubscriber(Node):
         wheel_data[12] = msg.effort[3]
 
         self.data_wheel = wheel_data
-
-        current_left_wheel_pos = wheel_data[1] # Rear left wheel position
-        current_right_wheel_pos = wheel_data[4]  # Rear right wheel position
-        
-        # Call the dead reckoning function to update position
-        self.update_position(current_left_wheel_pos, current_right_wheel_pos)
-        
-        # Update the last positions for the next callback
-        self.last_rear_left_wheel_pos = current_left_wheel_pos
-        self.last_rear_right_wheel_pos = current_right_wheel_pos
-
-    def update_position(self, current_left_wheel_pos, current_right_wheel_pos):
-        """
-        Updates the position of the rover based on the wheel measurements.
-
-        Args:
-            current_left_wheel_pos: The current position of the left wheel.
-            current_right_wheel_pos: The current position of the right wheel.
-        """
-        # Calculate the distance each wheel has traveled since the last update
-        left_distance = (current_left_wheel_pos - self.last_rear_left_wheel_pos) * self.wheel_radius
-        right_distance = (current_right_wheel_pos - self.last_rear_right_wheel_pos) * self.wheel_radius
-        
-        # Dead reckoning calculations
-        delta_distance = (left_distance + right_distance) / 2
-        delta_theta = (right_distance - left_distance) / self.wheel_base
-        
-        # Update the global position and orientation
-        self.orientation += delta_theta
-        self.x_pos += delta_distance * cos(self.orientation)
-        self.y_pos += delta_distance * sin(self.orientation)
-        
-        # Publish the updated position and orientation
-        pose_msg = Pose2D()
-        pose_msg.x = self.x_pos
-        pose_msg.y = self.y_pos
-        pose_msg.theta = self.orientation
-        self.dr_publisher.publish(pose_msg)
     
     def wheel_data_publish(self):
         """

@@ -97,6 +97,19 @@ def generate_launch_description():
             name='rover_pose_write_node'
         ),
 
+        # Dead reckoning node
+        Node(
+            package='sim_vehicle',
+            executable='rover_dead_reck',
+            name='rover_dead_reck_node'
+        ),
+
+        Node(
+            package='sim_vehicle',
+            executable='rover_dead_reck_writer',
+            name='rover_dead_reck_writer_node'
+        ),
+
         # Compute error node
         # Node(
         #     package='sim_vehicle',
@@ -105,11 +118,11 @@ def generate_launch_description():
         # ),    
 
         # Rover lidar writer
-        # Node(
-        #     package='sim_vehicle',
-        #     executable='rover_sensor_lidar_writer',
-        #     name='rover_sensor_lidar_writer_node'
-        # ),
+        Node(
+            package='sim_vehicle',
+            executable='rover_sensor_lidar_writer',
+            name='rover_sensor_lidar_writer_node'
+        ),
 
         # Rover wheel writer
         Node(
@@ -131,10 +144,9 @@ def generate_launch_description():
             period=5.0,  # Delay in seconds before starting the simulation
             actions=[*node_list]
     )
+
     return LaunchDescription([
-
         start_simulation,
-
         delay_start_node,
         # Shutdown the launch process after a certain amount of seconds
         TimerAction(

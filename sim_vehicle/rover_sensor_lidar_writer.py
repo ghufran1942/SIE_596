@@ -12,7 +12,7 @@ class LidarDataFromSimulation(Node):
         super().__init__('rover_lidar_writer') # Initializing the Node with the name 'rover_lidar_writer'
         self.subscription = self.create_subscription(Float32MultiArray, '/rover/sensor/lidar/lidar_ranges', self.callback, 10) # Creating a subscription to the '/rover/sensor/lidar/lidar_ranges' topic and specifying the callback function to be called when a message is received
         
-        self.file = open('lidardatafile.txt', 'a') 
+        self.file = open('lidardatafile.txt', 'w') 
 
     def callback(self, msg):
         # Process the received message and append the data to the text file

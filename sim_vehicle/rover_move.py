@@ -28,12 +28,13 @@ class MotionNode(Node):
         super().__init__('motion_command')
 
         self.subscription = self.create_subscription(Float32MultiArray, '/rover/sensor/lidar/lidar_ranges', self.lidar_scan_callback, 10)
+        self.dead_reckoning_subscription = self.create_subscription(Twist, '/rover/motion/dead_reckoning', self.dead_reckoning_callback, 10)
+        self.wheel_data_subscription = self.create_subscription(Float32MultiArray, '/rover/sensor/wheel_data', self.wheel_data_callback, 10)
 
-        self.delta_T_publishing = 1.0 #seconds 
+        self.delta_T_publishing = 0.1 #seconds 
         self.vforward = 0.1 #[m/s]
         self.vturn = 0.0 #[rad/s]
         self.time = 0.0 #seconds
-        self.radius = 5 #meters
 
         #motion command -
         self.publisher_motion = self.create_publisher(Twist, '/rover/motion/cmd_vel', 10) 
@@ -42,6 +43,34 @@ class MotionNode(Node):
         self.timer_input = self.create_timer(publish_every, self.timer_in_callback) 
         self.time += self.delta_T_publishing
 
+        self.dead_reckoning_ = None
+        self.wheel_data_ = None
+    
+    def wheel_data_callback(self, msg):
+        """
+        Callback function for processing wheel data.
+
+        This function processes the received wheel data and performs actions based on the data.
+
+        Args:
+            msg: A Float32MultiArray message containing wheel data.
+        """
+        self.wheel_data_ = msg
+        # self.get_logger().info(f'Wheel data: {msg.data}')
+
+    def dead_reckoning_callback(self, msg):
+        """
+        Callback function for processing dead reckoning data.
+
+        This function processes the received dead reckoning data and performs actions based on the data.
+
+        Args:
+            msg: A Twist message containing dead reckoning data.
+        """
+        self.dead_reckoning_ = msg
+        # self.get_logger().info(f'Dead Reckoning: Linear velocity: {round(msg.linear.x,4)} m/s, Angular velocity: {round(msg.angular.z,4)} rad/s')
+            
+            
     def lidar_scan_callback(self, msg):
         """
         Callback function for processing lidar scan data.
@@ -52,37 +81,31 @@ class MotionNode(Node):
             msg: A Float32MultiArray message containing lidar scan data.
         """
         avoid_range = 9 #meters 
-        avoid_range_critical = 2*np.sqrt(2) #meters 
+        avoid_range_critical = 2*np.sqrt(3) #meters 
         range_center_index = len(msg.data)//2 
         range_center_value = msg.data[range_center_index]
         range_right_value = msg.data[0] 
-        range_left_value = msg.data[-1] 
+        range_left_value = msg.data[-1]
 
-        if range_center_value < avoid_range:
-            self.vforward = -0.5
-            self.vturn = 0.0
-        elif range_center_value > avoid_range and range_right_value >= avoid_range and range_left_value >= avoid_range:
-            self.vturn = 1.0
-            self.vforward = 2*self.vturn
+        if range_center_value != float('inf') or range_right_value != float('inf') or range_left_value != float('inf'):
+            self.get_logger().info('Obstacles in sight')
+            # Set the desired motion command values
+            if range_center_value <= avoid_range or range_right_value <= avoid_range or range_left_value <= avoid_range:
+                self.vforward = -0.3
+                self.vturn = 0.0
+
         else:
-            self.vforward = 0.0
-
-        # if range_center_value != float('inf') or range_right_value != float('inf') or range_left_value != float('inf'):
-        #     self.get_logger().info('Obstacles in sight')
-        #     # Set the desired motion command values
-        #     if range_center_value > avoid_range and range_right_value > avoid_range and range_left_value > avoid_range:
-        #         self.vforward = 0.3
-        #         self.vturn = 0.0
-        #     elif range_center_value <= avoid_range_critical and range_right_value <= avoid_range_critical and range_left_value <= avoid_range_critical:
-        #         self.vforward = 0.0
-        #         self.vturn = 0.5
-        #     else:
-        #         self.vforward = 0.1
-        #         self.vturn = 0.5
-        # else:
-        #     self.get_logger().info('No obstacles in sight')
-        #     self.vforward = 0.5
-        #     self.vturn = 0.0
+            self.get_logger().info('No obstacles in sight')
+            if range_center_value > avoid_range and range_right_value > avoid_range and range_left_value > avoid_range:
+                self.vturn = 0.5
+                self.vforward = 2*self.vturn
+                self.get_logger().info("Moving in Circle")
+                while self.vforward > 0.5:
+                    self.vforward -= 0.05
+                    self.vturn = self.vforward/2
+            else:
+                self.vforward = 0.1
+                self.vturn = 0.5
         
     def timer_in_callback(self):
         """
@@ -96,7 +119,7 @@ class MotionNode(Node):
 
         self.publisher_motion.publish(motion_msg) 
 
-        #publish the deltaT for the thepretical trajectory computation 
+        # publish the deltaT for the thepretical trajectory computation 
         deltaT = Float64()
         deltaT.data = self.delta_T_publishing
         self.publisher_deltaT.publish(deltaT)

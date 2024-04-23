@@ -32,7 +32,7 @@ class LidarMeasurments(Node):
         # self.subscription # prevent unused variable warning
         # Publishers
         self.publisher = self.create_publisher(Float32MultiArray, '/rover/sensor/lidar/lidar_ranges', 10)
-        publish_rate = 1.0 # seconds
+        publish_rate = 0.2 # seconds
         self.timer = self.create_timer(publish_rate, self.publisher_callback)
 
     def laser_scan_callback(self, msg):
@@ -59,6 +59,13 @@ class LidarMeasurments(Node):
         msg = Float32MultiArray()
         msg.data = self.range_data
         self.publisher.publish(msg)
+
+        finite_distances = [d for d in msg.data if d != float('inf')]
+        if not finite_distances:
+            max_distance = 'max'
+        else:
+            max_distance = round(max(finite_distances),2)
+        self.get_logger().info(f'Publishing: {max_distance} meters')
 
 def main(args=None):
     rclpy.init(args=args)

@@ -16,7 +16,7 @@ setup(
     ],
     install_requires=['setuptools'],
     zip_safe=True,
-    maintainer='captainpaper',
+    maintainer='ghufran1942',
     maintainer_email='ghufran1942@gmail.com',
     description='TODO: Package description',
     license='TODO: License declaration',
@@ -31,6 +31,8 @@ setup(
             'rover_sensor_lidar_writer = sim_vehicle.rover_sensor_lidar_writer:main',
             'rover_traj = sim_vehicle.rover_traj:main',
             'rover_pose_write = sim_vehicle.rover_pose_writer:main',
+            'rover_dead_reck = sim_vehicle.rover_dead_reck:main',
+            'rover_dead_reck_writer = sim_vehicle.rover_dead_reck_writer:main'
         ],
     },
 )
